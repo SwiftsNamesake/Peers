@@ -21,9 +21,40 @@ import random
 import threading, queue
 
 from math import sin, cos, pi as π
+from cmath import rect, polar
 
 from PIL import Image
 from PIL import ImageTk
+
+
+
+def hexString(rgb):
+	return  '#{:02x}{:02x}{:02x}'.format(*rgb)
+
+
+
+def lotus(root, canvas):
+
+	'''
+	Docstring goes here
+
+	'''
+
+	origin = 250+250j
+	palette = ((origin+rect(θ*0.3, θ*π/180.0), hexString((θ % 255, int(θ*1.5) % 255, int(θ*2.5) % 255))) for θ in range(0, 360, 10))
+
+	def animate():
+		for pos, colour in palette:
+			id = canvas.create_oval((pos.real-2, pos.imag-2, pos.real+2, pos.imag+2), fill=colour)
+			for r in range(2, 9):
+				canvas.coords(id, (pos.real-r, pos.imag-r, pos.real+r, pos.imag+r))
+				# root.after(1000//24, lambda: next(frames))
+				yield
+				# time.sleep(1.0/24)
+
+	frames = animate()
+	next(frames)
+
 
 
 
@@ -38,59 +69,6 @@ def original():
 	print(host, port)
 	sock.connect((host, port))
 	sock.close
-
-
-
-def other():
-	# Sockets client script
-
-	world = []
-	x = 0
-
-	s = socket.socket()
-
-	print("Connecting to server...")
-
-	while True:
-		try:
-			s.connect(("localhost", 44000))
-			break
-		except:
-			print("Retrying connection to server...")
-			time.sleep(1)
-
-	print("Connection Matched!")
-
-	while True:
-		# keyboardInput = input("Enter the message: ")
-		# s.send(bytes(message, 'UTF-8'))
-		# message = keyboardInput.encode('utf-8')
-		# s.send(message)
-
-		update = []
-		for i in range(random.randint(1, 10)):
-			update.append((x, 40+20*sin(x*π/180.0)))
-			x += 5
-		world += update
-
-		# TODO: Protocol for sending smaller packets of pickled data in sequence
-		data = pickle.dumps(update)
-		s.send(bytes('{0:04d}'.format(len(data)), 'utf-8') + data) # Send data with padded length prefix
-
-		print("Message sent!")
-		# r = s.recv(512) #(128*10)
-		# a = r
-		# a = r.decode('utf-8')
-		# print("Confirmation received message: ", r)
-		# if keyboardInput == "quit":
-			# break
-		time.sleep(1)
-
-	print("Good bye")
-
-	s.close()
-
-	a = input("Enter key to End:")
 
 
 
@@ -136,6 +114,8 @@ def main():
 
 	conn = connect('localhost', 44000)
 
+	root.bind('<Return>', lambda e: lotus(root, root.canvas))
+
 	def draw(event):
 		point = event.x, event.y
 		updates.put(point, False) # Do not block (?)
@@ -157,7 +137,7 @@ def main():
 		while not updates.empty():
 			points.append(updates.get(False))
 		data = pickle.dumps(points)
-		conn.send(bytes('{0:04d}'.format(len(data)), 'utf-8') + data)
+		conn.send(bytes('{0:04d}'.format(len(data)), 'utf-8') + data) # TODO: Protocol for sending smaller packets of pickled data in sequence
 
 		root.after(1000//30, upload) # TODO: Better model for pushing updates (?)
 

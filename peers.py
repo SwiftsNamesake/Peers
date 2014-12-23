@@ -18,7 +18,7 @@ s.bind((host, port))        # Bind to the port
 if sys.argv[1] == "connect":
     host = sys.argv[2]
     s.connect((host, port))
-    s.close 
+    s.close
 else:
     s.listen(5)                 # Now wait for client connection.
     while True:

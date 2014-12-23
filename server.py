@@ -26,14 +26,26 @@ import threading, queue
 
 
 
-SIZE = 720, 480
-root = tk.Tk()
-root.title('Server')
-root.geometry('{0:}x{1:}'.format(*SIZE))
-root.canvas = tk.Canvas(width=SIZE[0], height=SIZE[1])
-root.canvas.pack()
+def createContext():
 
-updates = queue.Queue()
+	'''
+	Docstring goes here
+
+	'''
+
+	SIZE = 720, 480
+	root = tk.Tk()
+	root.title('Server')
+	root.geometry('{0:}x{1:}'.format(*SIZE))
+	root.canvas = tk.Canvas(width=SIZE[0], height=SIZE[1])
+	root.canvas.pack()
+
+	updates = queue.Queue()
+
+	return root, updates
+
+
+root, updates = createContext()
 
 
 def listen(ip, port):
@@ -63,6 +75,7 @@ def listen(ip, port):
 		clientFork(*client)
 
 	sock.close()
+
 
 
 def clientFork(conn, addr):
@@ -119,6 +132,17 @@ def clientFork(conn, addr):
 
 
 
+def configure():
+
+	'''
+	Docstring goes here
+
+	'''
+
+	pass
+
+
+
 def main():
 
 	'''
@@ -133,11 +157,11 @@ def main():
 			print('Polling updates')
 			point, fill, height = updates.get(block=False)
 			print('Point is a', type(point))
-			root.canvas.create_oval((point[0], point[1]+height, point[0]+15, point[1]+15+height), fill=fill, width=0)
+			root.canvas.create_rectangle((point[0], point[1]+height, point[0]+15, point[1]+15+height), fill=fill, width=0)
 		root.after(1000//30, pollUpdates)
 
 	pollUpdates()
-
+	
 	root.mainloop()
 
 if __name__ == '__main__':
