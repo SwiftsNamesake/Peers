@@ -23,8 +23,8 @@ import threading, queue
 from math import sin, cos, pi as π
 from cmath import rect, polar
 
-from PIL import Image
-from PIL import ImageTk
+# from PIL import Image
+# from PIL import ImageTk
 
 
 
@@ -48,13 +48,16 @@ def lotus(root, canvas):
 			id = canvas.create_oval((pos.real-2, pos.imag-2, pos.real+2, pos.imag+2), fill=colour)
 			for r in range(2, 9):
 				canvas.coords(id, (pos.real-r, pos.imag-r, pos.real+r, pos.imag+r))
-				# root.after(1000//24, lambda: next(frames))
+				root.after(1000//24, lambda: next(frames))
 				yield
 				# time.sleep(1.0/24)
 
 	frames = animate()
-	next(frames)
 
+	try:
+		next(frames)
+	except StopIteration:
+		pass
 
 
 

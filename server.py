@@ -18,8 +18,8 @@ import socket, sys               # Import socket module
 import pickle
 
 import tkinter as tk
-from PIL import Image
-from PIL import ImageTk
+# from PIL import Image
+# from PIL import ImageTk
 
 import random
 import threading, queue
