@@ -28,7 +28,7 @@ class Board(object):
 	'''
 
 	initial = ( '♖♘♗♕♔♗♘♖',
-				'♙♙♙♙♙♙♙♙',
+				' ♙♙♙♙♙♙♙',
 				'        ',
 				'        ',
 				'        ',
@@ -37,6 +37,7 @@ class Board(object):
 				'♜♞♜♛♚♝♞♜')
 
 	# TODO: Implement magic methods
+	# TODO: Query (with bounds checking)
 
 	def __init__(self, size, **styles):
 
@@ -78,6 +79,8 @@ class Board(object):
 
 		'''
 
+		# TODO: Rename (name is currently ambiguous; atPoint, atCoord) (?)
+
 		# TODO: Deal with invalid input (...)
 		# TODO: Dealing with margins, padding, etc.
 		# TODO: Flexible output (Square, col and row, etc.)
@@ -89,6 +92,16 @@ class Board(object):
 			return col, row
 		else:
 			return False
+
+
+	def within(self, col, row):
+
+		'''
+		Checks if a coordinate is within the board
+
+		'''
+
+		return (0 <= col < 8) and (0 <= row < 8)
 
 
 	def highlight(self, canvas, undo, *squares):

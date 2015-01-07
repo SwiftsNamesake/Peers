@@ -43,7 +43,22 @@ def main():
 	board.render(canvas)
 
 	def onclick(event):
-		for
+		
+		pos = board.at(event.x, event.y)
+
+		print('Click')
+		if not pos:
+			return
+
+		print('Valid pos')
+		col, row = pos
+
+		if board.board[col][row].piece == None:
+			return
+
+		print('Non-empty square')
+		print(*(board.board[col][row].piece.moves(board, col, row)))
+		board.highlight(canvas, True, *(board.board[col][row].piece.moves(board, col, row)))
 		# col, row = board.at(event.x, event.y)
 		# board.highlight(canvas, True, (col, row)) # TODO: Coordinate method, handle offsets and margins probably
 
