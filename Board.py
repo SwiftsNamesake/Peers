@@ -46,7 +46,7 @@ class Board(object):
 		'''
 
 		self.board = self.create(size, **styles) # TODO: Rename (eg. squares, tiles) (?)
-		self.size = size # The size of each square
+		self.size  = size # The size of each square
 		self.highlighted = [] # Highlighted squares
 
 
@@ -71,14 +71,32 @@ class Board(object):
 			square.render(canvas)
 
 
+	def at(self, x, y):
+		
+		'''
+		Retrieves the Square at the specified coordinate
+
+		'''
+
+		# TODO: Deal with invalid input (...)
+		# TODO: Dealing with margins, padding, etc.
+		# TODO: Flexible output (Square, col and row, etc.)
+
+		col  = x//self.size
+		row  = y//self.size
+
+		if (0 <= col < 8) and (0 <= row < 8):
+			return col, row
+		else:
+			return False
+
+
 	def highlight(self, canvas, undo, *squares):
 
 		'''
 		Docstring goes here
 
 		'''
-
-		print('Highlighting')
 
 		# Remove highlighting from those squares that currently have it
 		if undo:

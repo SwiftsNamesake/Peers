@@ -33,10 +33,6 @@ def main():
 
 	'''
 
-	for piece in '♔♕♖♗♘♙♚♛♜♝♞♟':
-		x = Piece(piece)
-		print('{0.name} is {0.colour}'.format(x))
-
 	root = tk.Tk()
 	root.title('Chess')
 	root.resizable(width=False, height=False)
@@ -47,11 +43,17 @@ def main():
 	board.render(canvas)
 
 	def onclick(event):
-		col, row = event.x//board.size, event.y//board.size
-		print('x={0.x}, y={0.y}, col={1}, row={2}'.format(event, col, row))
-		board.highlight(canvas, True, (event.x//board.size, event.y//board.size)) # TODO: Coordinate method, handle offsets and margins probably
+		for
+		# col, row = board.at(event.x, event.y)
+		# board.highlight(canvas, True, (col, row)) # TODO: Coordinate method, handle offsets and margins probably
+
+	def onmove(event):
+		coord = board.at(event.x, event.y)
+		if coord:
+			board.highlight(canvas, True, coord)
 
 	root.bind('<Button-1>', onclick)
+	root.bind('<Motion>', onmove)
 
 	root.mainloop()
 

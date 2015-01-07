@@ -6,7 +6,7 @@
 # January 5 2015
 #
 
-# TODO | - 
+# TODO | - Use Enums (?)
 #        - 
 #
 # SPEC | -
@@ -16,6 +16,7 @@
 
 
 import tkinter as tk
+from itertools import takewhile
 
 from SwiftUtils.MultiSwitch import MultiSwitch
 
@@ -72,6 +73,34 @@ class Piece(object):
 		# TODO: Render and update, cache IDs
 		self.id = canvas.create_text(int((col+0.5)*size), int((row+0.5)*size), text=self.piece, anchor=tk.CENTER, **self.styles)
 
+
+	def moves(self, board, x, y):
+
+		'''
+		Retrieves a list of valid moves for this piece, given a board and a position.
+
+		'''
+
+		# TODO: Optimise, cache, lazy evaluation
+		# TODO: Simplify with itertools, generators
+
+		return MultiSwitch({
+			# Maximum steps in any direction is seven
+			# There are always 14 (8+8-2) possible moves, ignoring blocked squares
+			# Blocked squares are those that are occupied by an ally piece, or obscured by an enemy piece
+			# TODO: Extract helper functions (comparing colour, etc.)
+			'♖♜': takewhile(lambda m: board[x+dx][y].piece.colour != self.colour and board[x+dx-1][y].piece == None, ((x+dx, y) dx in range(7))),
+			#
+			'♘♞': [(x, y) for x in () for y in ()],
+			#
+			'♗♝': [],
+			#
+			'♕♛': [],
+			#
+			'♔♚': [],
+			#
+			'♙♟': []
+		}, mnemonic='moves')[self.piece]
 
 
 
