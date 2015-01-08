@@ -74,7 +74,7 @@ class Piece(object):
 		self.id = canvas.create_text(int((col+0.5)*size), int((row+0.5)*size), text=self.piece, anchor=tk.CENTER, **self.styles)
 
 
-	def moves(self, board, x, y):
+	def moves(self, board, x, y, piece=None):
 
 		'''
 		Retrieves a list of valid moves for this piece, given a board and a position.
@@ -88,6 +88,8 @@ class Piece(object):
 		# TODO: Prevent NoneType errors (square.piece is None if square is empty) (find a better way to represent empty squares?)
 
 		# TODO: Pre-calculate maximum range based on position (eg. maximum dx = 8-x) (?)
+
+		piece = piece or self.piece # Optional argument for piece type
 
 		within = board.within
 		isEmpty = lambda cl, rw: board.board[cl][rw].piece == None
@@ -112,33 +114,33 @@ class Piece(object):
 			# There are always 14 (8+8-2) possible moves, ignoring blocked squares
 			# Blocked squares are those that are occupied by an ally piece, or obscured by an enemy piece
 			# TODO: Extract helper functions (comparing colour, etc.)
-			'♖♜': chain( takewhile(accessible(lambda mx, my: (mx-1, my)), ((x+dx, y) for dx in range(1, 7+1))),
-				           takewhile(accessible(lambda mx, my: (mx+1, my)), ((x-dx, y) for dx in range(1, 7+1))),
-				           takewhile(accessible(lambda mx, my: (mx, my-1)), ((x, y+dy) for dy in range(1, 7+1))),
-				           takewhile(accessible(lambda mx, my: (mx, my+1)), ((x, y-dy) for dy in range(1, 7+1)))),
+			'♖♜': lambda: chain( takewhile(accessible(lambda mx, my: (mx-1, my)), ((x+dx, y) for dx in range(1, 7+1))),
+				                   takewhile(accessible(lambda mx, my: (mx+1, my)), ((x-dx, y) for dx in range(1, 7+1))),
+				                   takewhile(accessible(lambda mx, my: (mx, my-1)), ((x, y+dy) for dy in range(1, 7+1))),
+				                   takewhile(accessible(lambda mx, my: (mx, my+1)), ((x, y-dy) for dy in range(1, 7+1)))),
 			# The Knight
 			# Moves two steps in one direction and two in the other (not diagonally).
 			# Is able to jump over other pieces
-			'♘♞': [(x+dx, y+dy) for dx in (-1, 1, -2, 2) for dy in (-1, 1, -2, 2) if valid(x+dx, y+dy) and abs(dx) != abs(dy)],
+			'♘♞': lambda: [(x+dx, y+dy) for dx in (-1, 1, -2, 2) for dy in (-1, 1, -2, 2) if valid(x+dx, y+dy) and abs(dx) != abs(dy)],
 			# The Bishop
 			# Can move any number of steps diagonally
 			# 
-			'♗♝': chain( takewhile(accessible(lambda mx, my: (x-1,y-1)), ((x+delta, y+delta) for delta in range(1, 7+1))),
-						   takewhile(accessible(lambda mx, my: (x-1,y+1)), ((x+delta, y-delta) for delta in range(1, 7+1))),
-						   takewhile(accessible(lambda mx, my: (x+1,y-1)), ((x-delta, y+delta) for delta in range(1, 7+1))),
-						   takewhile(accessible(lambda mx, my: (x+1,y+1)), ((x-delta, y-delta) for delta in range(1, 7+1)))),
+			'♗♝': lambda: chain( takewhile(accessible(lambda mx, my: (x-1,y-1)), ((x+delta, y+delta) for delta in range(1, 7+1))),
+						           takewhile(accessible(lambda mx, my: (x-1,y+1)), ((x+delta, y-delta) for delta in range(1, 7+1))),
+						           takewhile(accessible(lambda mx, my: (x+1,y-1)), ((x-delta, y+delta) for delta in range(1, 7+1))),
+						           takewhile(accessible(lambda mx, my: (x+1,y+1)), ((x-delta, y-delta) for delta in range(1, 7+1)))),
 			# The Queen
 			# Can move any number of steps in any one direction (equivalent to a combined Rook and Bishop)
-			'♕♛': [],
+			'♕♛': lambda: chain(self.moves(board, x, y, piece='♖'), self.moves(board, x, y, piece='♗')),
 			# The King
 			# Can move a single step in any direction
 			# TODO: Use itertools.product (?)
-			'♔♚': [(x+dx, y+dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1) if valid(x+dx, y+dy)],
+			'♔♚': lambda: [(x+dx, y+dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1) if valid(x+dx, y+dy)],
 			# Direction depends on colour 
 			# TODO: Avoid hard-coding colour-dependent direction
 			# TODO: Simplify 
-			'♙♟': ([(x, y+dyPawn)] if valid(x, y+dyPawn) else []) + [(x+dx, y+dyPawn) for dx in (-1, 1) if hasEnemy(x+dx, y+dyPawn)]
-		}, mnemonic='moves')[self.piece]
+			'♙♟': lambda: ([(x, y+dyPawn)] if valid(x, y+dyPawn) else []) + [(x+dx, y+dyPawn) for dx in (-1, 1) if hasEnemy(x+dx, y+dyPawn)]
+		}, mnemonic='moves')[piece]()
 
 
 
