@@ -27,13 +27,14 @@ class Board(object):
 
 	'''
 
+	# TODO: Why are the chess glyphs wider than spaces?
 	initial = ( '♖♘♗♕♔♗♘♖',
-				' ♙♙♙♙♙♙♙',
+				' ♙♙♙ ♙♙♙',
 				'        ',
 				'        ',
 				'        ',
 				'        ',
-				'♟♟♟♟♟♟♟♟',
+				'♟♟♟♟ ♟ ♟',
 				'♜♞♜♛♚♝♞♜')
 
 	# TODO: Implement magic methods

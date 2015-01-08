@@ -81,18 +81,25 @@ class Piece(object):
 
 		'''
 
-		# TODO: Optimise, cache, lazy evaluation
+		# TODO: Optimise, cache, lazy evaluation (create the switch only once)
 		# TODO: Simplify with itertools, generators
 		# TODO: Prevent NoneType errors (square.piece is None if square is empty) (find a better way to represent empty squares?)
 
+		# TODO: Pre-calculate maximum range based on position (eg. maximum dx = 8-x) (?)
+
 		within = board.within
-
-		accessible = lambda m: (board.board[m[0]][y].piece.colour != self.colour) and (board.board[m[0]-1][y].piece == None) # TODO: Add prev argument (?)
-
 		isEmpty = lambda cl, rw: board.board[cl][rw].piece == None
 		hasEnemy = lambda cl, rw: within(cl,rw) and not isEmpty(cl, rw) and board.board[cl][rw].piece.colour != self.colour
-		
 		valid = lambda cl, rw: within(cl, rw) and (hasEnemy(cl, rw) or isEmpty(cl, rw))
+
+		def accessible(previous):
+			# Creates a function which determines if a particular square is accessible
+			# Previous is a function which returns the previous square in a series of moves
+			def predicate(m):
+				return valid(*m) and (previous(*m).piece in (None, self)) # TODO: Add prev argument (?)
+			return predicate
+
+		
 
 		dyPawn = (-1, 1)[self.colour=='white']
 
@@ -101,14 +108,19 @@ class Piece(object):
 			# There are always 14 (8+8-2) possible moves, ignoring blocked squares
 			# Blocked squares are those that are occupied by an ally piece, or obscured by an enemy piece
 			# TODO: Extract helper functions (comparing colour, etc.)
-			'♖♜': chain( takewhile(accessible, ((x+dx, y) for dx in range(7))),
-				           takewhile(accessible, ((x-dx, y) for dx in range(7))),
-				           takewhile(accessible, ((x, y+dy) for dy in range(7))),
-				           takewhile(accessible, ((x, y-dy) for dy in range(7)))),
-			#
-			'♘♞': [(x+dx, y+dy) for dx in (-1, 1, -2, 2) for dy in (-1, 1, -2, 2) if valid(x+dx, y+dy) and dx != dy],
-			#
-			'♗♝': [],
+			'♖♜': chain( takewhile(accessible(lambda mx, my: board.board[mx-1][my]), ((x+dx, y) for dx in range(1, 7+1))),
+				           takewhile(accessible(lambda mx, my: board.board[mx+1][my]), ((x-dx, y) for dx in range(1, 7+1))),
+				           takewhile(accessible(lambda mx, my: board.board[mx][my-1]), ((x, y+dy) for dy in range(1, 7+1))),
+				           takewhile(accessible(lambda mx, my: board.board[mx][my+1]), ((x, y-dy) for dy in range(1, 7+1)))),
+			# Moves two steps in one direction and two in the other (not diagonally).
+			# Is able to jump over other pieces
+			'♘♞': [(x+dx, y+dy) for dx in (-1, 1, -2, 2) for dy in (-1, 1, -2, 2) if valid(x+dx, y+dy) and abs(dx) != abs(dy)],
+			# Can move any number of steps diagonally
+			# 
+			'♗♝': [(x+delta, y+delta) for delta in range(1, 7+1) if valid(x+delta, y+delta) and accessible((x+delta,y+delta))] +
+					[(x-delta, y+delta) for delta in range(1, 7+1) if valid(x+delta, y+delta) and accessible((x+delta,y+delta))] +
+					[(x+delta, y-delta) for delta in range(1, 7+1) if valid(x+delta, y+delta) and accessible((x+delta,y+delta))] +
+					[(x-delta, y-delta) for delta in range(1, 7+1) if valid(x+delta, y+delta) and accessible((x+delta,y+delta))],
 			#
 			'♕♛': [],
 			#

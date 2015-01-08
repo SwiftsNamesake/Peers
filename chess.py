@@ -10,6 +10,7 @@
 #        - 3D
 #        - Sounds, pygame (?)
 #        - Strict separation between logic and interaction
+#        - Lift and drag a piece (shadow), animations
 #
 # SPEC | -
 #        -

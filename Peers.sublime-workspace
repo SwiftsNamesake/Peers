@@ -555,7 +555,7 @@
 			"file": "chess.py",
 			"settings":
 			{
-				"buffer_size": 1034,
+				"buffer_size": 1389,
 				"line_ending": "Windows",
 				"name": "#"
 			}
@@ -564,7 +564,7 @@
 			"file": "Board.py",
 			"settings":
 			{
-				"buffer_size": 2261,
+				"buffer_size": 2478,
 				"line_ending": "Windows"
 			}
 		},
@@ -572,7 +572,7 @@
 			"file": "Piece.py",
 			"settings":
 			{
-				"buffer_size": 1354,
+				"buffer_size": 3246,
 				"line_ending": "Windows"
 			}
 		},
@@ -601,16 +601,20 @@
 		"selected_items":
 		[
 			[
-				"im",
-				"Set Syntax: PythonImproved"
-			],
-			[
 				"co",
 				"Git: Commit"
 			],
 			[
 				"ad",
 				"Git: Add..."
+			],
+			[
+				"git add",
+				"Git: Add..."
+			],
+			[
+				"im",
+				"Set Syntax: PythonImproved"
 			],
 			[
 				"add",
@@ -739,10 +743,6 @@
 			[
 				"key",
 				"Preferences: Key Bindings - Default"
-			],
-			[
-				"git add",
-				"Git: Add Current File"
 			],
 			[
 				"project",
@@ -1291,6 +1291,28 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"hasEnenemy",
+			"within",
+			"dyPawn",
+			"dxPawn",
+			"dwPawn",
+			"dxPawn",
+			"rw, cl",
+			"dxPawn",
+			"x",
+			"+dx",
+			"x+dx",
+			"board",
+			"x",
+			"square",
+			"pos",
+			":",
+			" 			 ",
+			"//self.size",
+			"y",
+			"x",
+			"self.size*",
+			"x",
 			"size",
 			"(event.x//board.size, event.y//board.size)",
 			"highlighted",
@@ -1396,29 +1418,7 @@
 			"BOLD",
 			"em",
 			"player",
-			"playing",
-			"return player",
-			"player",
-			"void",
-			"play",
-			"FIFTH",
-			"NINTH",
-			"FIFTH",
-			"MediaPlayer",
-			"playEffect",
-			"audio",
-			"FIFTH",
-			"case ",
-			":",
-			"public static final",
-			"=",
-			"fifth",
-			"int",
-			"ding",
-			"Media",
-			"playSound",
-			"Resources.",
-			"resources"
+			"playing"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1454,7 +1454,7 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -1641,11 +1641,11 @@
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.x": -0.0,
+						"translation.y": 285.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -1775,10 +1775,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2354.0,
+						"translation.y": 2232.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
@@ -1787,15 +1787,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1034,
+						"buffer_size": 1389,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								913,
-								913
+								403,
+								403
 							]
 						],
 						"settings":
@@ -1908,10 +1908,10 @@
 							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 285.0,
+						"translation.y": 71.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -1920,15 +1920,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2261,
+						"buffer_size": 2478,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1191,
-								1191
+								1449,
+								1449
 							]
 						],
 						"settings":
@@ -2040,10 +2040,10 @@
 							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1083.0,
+						"translation.y": 1230.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -2052,15 +2052,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1354,
+						"buffer_size": 3246,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								452,
-								452
+								2812,
+								2812
 							]
 						],
 						"settings":
@@ -2168,11 +2168,12 @@
 								"Python Django": "Python"
 							},
 							"codeintel_tooltips": "popup",
+							"spell_check": false,
 							"sublime_auto_complete": true,
 							"syntax": "Packages/Python/Python.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1539.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -2323,8 +2324,8 @@
 						"selection":
 						[
 							[
-								778,
-								792
+								2271,
+								2151
 							]
 						],
 						"settings":
@@ -2437,10 +2438,10 @@
 							"syntax": "Packages/Python/Python.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 245.0,
+						"translation.y": 1368.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
