@@ -89,7 +89,7 @@ class Piece(object):
 
 		# TODO: Pre-calculate maximum range based on position (eg. maximum dx = 8-x) (?)
 
-		piece = piece or self.piece # Optional argument for piece type
+		piece = piece or self.piece # Optional argument for piece type (defaults to self)
 
 		within = board.within
 		isEmpty = lambda cl, rw: board.board[cl][rw].piece == None
