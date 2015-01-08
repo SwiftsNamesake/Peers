@@ -81,6 +81,8 @@ class Piece(object):
 
 		'''
 
+		# TODO: Take piece type as argument (?)
+
 		# TODO: Optimise, cache, lazy evaluation (create the switch only once)
 		# TODO: Simplify with itertools, generators
 		# TODO: Prevent NoneType errors (square.piece is None if square is empty) (find a better way to represent empty squares?)
@@ -96,7 +98,8 @@ class Piece(object):
 			# Creates a function which determines if a particular square is accessible
 			# Previous is a function which returns the previous square in a series of moves
 			def predicate(m):
-				return valid(*m) and (previous(*m).piece in (None, self)) # TODO: Add prev argument (?)
+				px, py = previous(*m)
+				return valid(*m) and (not valid(px, py) or board.board[px][py].piece in (None, self)) # TODO: Add prev argument (?)
 			return predicate
 
 		
@@ -104,27 +107,33 @@ class Piece(object):
 		dyPawn = (-1, 1)[self.colour=='white']
 
 		return MultiSwitch({
+			# The Rook
 			# Maximum steps in any direction is seven
 			# There are always 14 (8+8-2) possible moves, ignoring blocked squares
 			# Blocked squares are those that are occupied by an ally piece, or obscured by an enemy piece
 			# TODO: Extract helper functions (comparing colour, etc.)
-			'♖♜': chain( takewhile(accessible(lambda mx, my: board.board[mx-1][my]), ((x+dx, y) for dx in range(1, 7+1))),
-				           takewhile(accessible(lambda mx, my: board.board[mx+1][my]), ((x-dx, y) for dx in range(1, 7+1))),
-				           takewhile(accessible(lambda mx, my: board.board[mx][my-1]), ((x, y+dy) for dy in range(1, 7+1))),
-				           takewhile(accessible(lambda mx, my: board.board[mx][my+1]), ((x, y-dy) for dy in range(1, 7+1)))),
+			'♖♜': chain( takewhile(accessible(lambda mx, my: (mx-1, my)), ((x+dx, y) for dx in range(1, 7+1))),
+				           takewhile(accessible(lambda mx, my: (mx+1, my)), ((x-dx, y) for dx in range(1, 7+1))),
+				           takewhile(accessible(lambda mx, my: (mx, my-1)), ((x, y+dy) for dy in range(1, 7+1))),
+				           takewhile(accessible(lambda mx, my: (mx, my+1)), ((x, y-dy) for dy in range(1, 7+1)))),
+			# The Knight
 			# Moves two steps in one direction and two in the other (not diagonally).
 			# Is able to jump over other pieces
 			'♘♞': [(x+dx, y+dy) for dx in (-1, 1, -2, 2) for dy in (-1, 1, -2, 2) if valid(x+dx, y+dy) and abs(dx) != abs(dy)],
+			# The Bishop
 			# Can move any number of steps diagonally
 			# 
-			'♗♝': [(x+delta, y+delta) for delta in range(1, 7+1) if valid(x+delta, y+delta) and accessible((x+delta,y+delta))] +
-					[(x-delta, y+delta) for delta in range(1, 7+1) if valid(x+delta, y+delta) and accessible((x+delta,y+delta))] +
-					[(x+delta, y-delta) for delta in range(1, 7+1) if valid(x+delta, y+delta) and accessible((x+delta,y+delta))] +
-					[(x-delta, y-delta) for delta in range(1, 7+1) if valid(x+delta, y+delta) and accessible((x+delta,y+delta))],
-			#
+			'♗♝': chain( takewhile(accessible(lambda mx, my: (x-1,y-1)), ((x+delta, y+delta) for delta in range(1, 7+1))),
+						   takewhile(accessible(lambda mx, my: (x-1,y+1)), ((x+delta, y-delta) for delta in range(1, 7+1))),
+						   takewhile(accessible(lambda mx, my: (x+1,y-1)), ((x-delta, y+delta) for delta in range(1, 7+1))),
+						   takewhile(accessible(lambda mx, my: (x+1,y+1)), ((x-delta, y-delta) for delta in range(1, 7+1)))),
+			# The Queen
+			# Can move any number of steps in any one direction (equivalent to a combined Rook and Bishop)
 			'♕♛': [],
-			#
-			'♔♚': [],
+			# The King
+			# Can move a single step in any direction
+			# TODO: Use itertools.product (?)
+			'♔♚': [(x+dx, y+dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1) if valid(x+dx, y+dy)],
 			# Direction depends on colour 
 			# TODO: Avoid hard-coding colour-dependent direction
 			# TODO: Simplify 
