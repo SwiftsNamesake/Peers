@@ -16,8 +16,9 @@
 
 import tkinter as tk
 
-from Square import Square
+from collections import namedtuple
 
+from Square import Square
 
 
 class Board(object):
@@ -35,7 +36,7 @@ class Board(object):
 				'        ',
 				'        ',
 				'♟♟♟♟♟♟♟♟',
-				'♜♞♜♛♚♝♞♜')
+				'♜♞♝♛♚♝♞♜')
 
 	# TODO: Implement magic methods
 	# TODO: Query (with bounds checking)
@@ -119,8 +120,13 @@ class Board(object):
 		# TODO: Check whose turn it is
 		# TODO: Check if target is occupied (handle attacks)
 
+		# TODO: Provide more information about the move
+
+		Move = namedtuple('Move', 'valid fr to')
+
 		frCol, frRow = fr
 		toCol, toRow = to
+
 		if self.board[frCol][frRow].piece.colour != self.turn:
 			print('Not your turn.')
 			return False
@@ -131,6 +137,9 @@ class Board(object):
 
 		source = self.board[frCol][frRow]
 		target = self.board[toCol][toRow]
+
+		# attacked = target.piece if 
+
 		target.piece = None # Takes care of attacks ()
 
 		self.board[frCol][frRow].piece, self.board[toCol][toRow].piece = target.piece, source.piece  # Swap pieces

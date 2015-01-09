@@ -37,8 +37,8 @@ class Piece(object):
 	names = MultiSwitch({'♖♜': 'rook',
 			 			 '♘♞': 'knight',
 			 			 '♗♝': 'bishop',
-			 			 '♕♛': 'king',
-			 			 '♔♚': 'queen',
+			 			 '♕♛': 'queen',
+			 			 '♔♚': 'king',
 			 			 '♙♟': 'pawn'})
 
 
@@ -104,21 +104,21 @@ class Piece(object):
 		piece = piece or self.piece # Optional argument for piece type (defaults to self)
 
 		within = board.within
-		isEmpty = lambda cl, rw: board.board[cl][rw].piece == None
-		hasEnemy = lambda cl, rw: within(cl,rw) and not isEmpty(cl, rw) and board.board[cl][rw].piece.colour != self.colour
-		valid = lambda cl, rw: within(cl, rw) and (hasEnemy(cl, rw) or isEmpty(cl, rw))
+		isEmpty  = lambda cl, rw: board.board[cl][rw].piece == None
+		hasEnemy = lambda cl, rw: not isEmpty(cl, rw) and board.board[cl][rw].piece.colour != self.colour
+		hasAlly  = lambda cl, rw: not isEmpty(cl, rw) and board.board[cl][rw].piece.colour == self.colour
+		isValid  = lambda cl, rw: within(cl, rw) and not hasAlly(cl, rw)
 
 		def accessible(previous):
 			# Creates a function which determines if a particular square is accessible
 			# Previous is a function which returns the previous square in a series of moves
 			def predicate(m):
 				px, py = previous(*m)
-				return valid(*m) and (not valid(px, py) or board.board[px][py].piece in (None, self)) # TODO: Add prev argument (?)
+				return isValid(*m) and (not isValid(px, py) or board.board[px][py].piece in (None, self)) # TODO: Add prev argument (?) (✓)
 			return predicate
 
-		
+		dyPawn = (-1, 1)[self.colour=='white'] # Direction this pawn moves in
 
-		dyPawn = (-1, 1)[self.colour=='white']
 
 		return MultiSwitch({
 			# The Rook
@@ -133,24 +133,28 @@ class Piece(object):
 			# The Knight
 			# Moves two steps in one direction and two in the other (not diagonally).
 			# Is able to jump over other pieces
-			'♘♞': lambda: [(x+dx, y+dy) for dx in (-1, 1, -2, 2) for dy in (-1, 1, -2, 2) if valid(x+dx, y+dy) and abs(dx) != abs(dy)],
+			'♘♞': lambda: [(x+dx, y+dy) for dx in (-1, 1, -2, 2) for dy in (-1, 1, -2, 2) if isValid(x+dx, y+dy) and abs(dx) != abs(dy)],
 			# The Bishop
 			# Can move any number of steps diagonally
-			'♗♝': lambda: chain( takewhile(accessible(lambda mx, my: (x-1,y-1)), ((x+delta, y+delta) for delta in range(1, 7+1))),
-						           takewhile(accessible(lambda mx, my: (x-1,y+1)), ((x+delta, y-delta) for delta in range(1, 7+1))),
-						           takewhile(accessible(lambda mx, my: (x+1,y-1)), ((x-delta, y+delta) for delta in range(1, 7+1))),
-						           takewhile(accessible(lambda mx, my: (x+1,y+1)), ((x-delta, y-delta) for delta in range(1, 7+1)))),
+			'♗♝': lambda: chain( takewhile(accessible(lambda mx, my: (mx-1, my-1)), ((x+delta, y+delta) for delta in range(1, 7+1))),
+						           takewhile(accessible(lambda mx, my: (mx-1, my+1)), ((x+delta, y-delta) for delta in range(1, 7+1))),
+						           takewhile(accessible(lambda mx, my: (mx+1, my-1)), ((x-delta, y+delta) for delta in range(1, 7+1))),
+						           takewhile(accessible(lambda mx, my: (mx+1, my+1)), ((x-delta, y-delta) for delta in range(1, 7+1)))),
 			# The Queen
 			# Can move any number of steps in any one direction (equivalent to a combined Rook and Bishop)
 			'♕♛': lambda: chain(self.moves(board, x, y, piece='♖'), self.moves(board, x, y, piece='♗')),
 			# The King
 			# Can move a single step in any direction
 			# TODO: Use itertools.product (?)
-			'♔♚': lambda: [(x+dx, y+dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1) if valid(x+dx, y+dy)],
+			'♔♚': lambda: [(x+dx, y+dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1) if isValid(x+dx, y+dy)],
 			# Direction depends on colour 
 			# TODO: Avoid hard-coding colour-dependent direction
-			# TODO: Simplify 
-			'♙♟': lambda: ([(x, y+dyPawn)] if within(x, y+dyPawn) and isEmpty(x, y+dyPawn) else []) + [(x+dx, y+dyPawn) for dx in (-1, 1) if hasEnemy(x+dx, y+dyPawn)]
+			# TODO: Simplify
+			# TODO: Store initial position (?)
+			# TODO: Allow ignorable None in list of moves (?)
+			'♙♟': lambda: ([(x, y+dyPawn)] if within(x, y+dyPawn) and isEmpty(x, y+dyPawn) else []) +
+							([(x, y+dyPawn*2)] if within(x, y+dyPawn*2) and isEmpty(x, y+dyPawn*2) and (y == (1 if dyPawn == 1 else 6)) else []) +
+							 [(x+dx, y+dyPawn) for dx in (-1, 1) if hasEnemy(x+dx, y+dyPawn)]
 		}, mnemonic='moves')[piece]()
 
 
