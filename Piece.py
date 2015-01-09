@@ -74,6 +74,16 @@ class Piece(object):
 		self.id = canvas.create_text(int((col+0.5)*size), int((row+0.5)*size), text=self.piece, anchor=tk.CENTER, **self.styles)
 
 
+	def check(self, board, x, y):
+		
+		'''
+		Docstring goes here
+
+		'''
+
+		pass
+
+
 	def moves(self, board, x, y, piece=None):
 
 		'''

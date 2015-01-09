@@ -47,9 +47,10 @@ class Board(object):
 
 		'''
 
-		self.board = self.create(size, **styles) # TODO: Rename (eg. squares, tiles) (?)
-		self.size  = size # The size of each square
-		self.highlighted = [] # Highlighted squares
+		self.board = self.create(size, **styles) 	# TODO: Rename (eg. squares, tiles) (?)
+		self.size  = size 							# The size of each square
+		self.highlighted = [] 						# Highlighted squares
+		self.turn = ('white', 'black')[0]			#
 
 
 	def create(self, size, **styles):
@@ -103,6 +104,51 @@ class Board(object):
 		'''
 
 		return (0 <= col < 8) and (0 <= row < 8)
+
+
+	def move(self, fr, to):
+
+		'''
+		Docstring goes here
+
+		'''
+
+		# TODO: Allow multiple formats ((0, 1) == 'A2' etc.)
+		# TODO: Update (call render) automatically (?)
+		# TODO: Check valid move (?)
+		# TODO: Check whose turn it is
+		# TODO: Check if target is occupied (handle attacks)
+
+		frCol, frRow = fr
+		toCol, toRow = to
+		if self.board[frCol][frRow].piece.colour != self.turn:
+			print('Not your turn.')
+			return False
+
+		if to not in self.board[frCol][frRow].piece.moves(self, *fr):
+			print('Invalid move', to)
+			return False
+
+		source = self.board[frCol][frRow]
+		target = self.board[toCol][toRow]
+		target.piece = None # Takes care of attacks ()
+
+		self.board[frCol][frRow].piece, self.board[toCol][toRow].piece = target.piece, source.piece  # Swap pieces
+		self.nextTurn()
+		return True
+
+
+	def nextTurn(self):
+
+		'''
+		Docstring goes here
+
+		'''
+
+		# TODO: Use itertools.cycle (?)
+		# eg.
+		# self.turns = cycle(('white', 'black'))
+		self.turn = ('black', 'white')[self.turn == 'black'] # Hacky way of swapping
 
 
 	def highlight(self, canvas, undo, *squares):

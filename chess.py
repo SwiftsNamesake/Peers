@@ -11,6 +11,7 @@
 #        - Sounds, pygame (?)
 #        - Strict separation between logic and interaction (mvc, logic, graphics)
 #        - Lift and drag a piece (shadow), animations
+#        - Clock
 #
 # SPEC | -
 #        -
@@ -47,6 +48,8 @@ class ChessApp(tk.Tk):
 		self.board = Board(size)
 		self.board.render(self.canvas)
 
+		self.selected = None # Selected piece (square)
+
 
 	def createWindow(self, size):
 		
@@ -71,8 +74,8 @@ class ChessApp(tk.Tk):
 
 		'''
 
-		root.bind('<Button-1>', lambda e: self.onclick(e))
-		root.bind('<Motion>', lambda e: self.onmove(e))
+		self.bind('<Button-1>', lambda e: self.onclick(e))
+		self.bind('<Motion>', lambda e: self.onmove(e))
 
 
 	def createMenus(self):
@@ -85,17 +88,44 @@ class ChessApp(tk.Tk):
 		pass
 
 
+	def askNames(self):
+
+		'''
+		Docstring goes here
+
+		'''
+
+		self.players = namedtuple('Players', 'one two')(input('Name of the first player'), input('Name of the second player'))
+
+
 	def onclick(self, event):
 		
+		board = self.board
+		canvas = self.canvas
 		pos = board.at(event.x, event.y)
 
-		if pos != False and board.board[pos[0]][pos[1]].piece != None:
-			col, row = pos
+		if pos == False:
+			return
+
+		# TODO: Take turns into account
+		# TODO: Turn feedback
+
+		if self.selected is None and board.board[pos[0]][pos[1]].piece != None:
+			print('Selecting a piee')
+			self.selected = pos
+			col, row = self.selected
 			board.highlight(canvas, True, *(board.board[col][row].piece.moves(board, col, row)))
-		# col, row = board.at(event.x, event.y)
-		# board.highlight(canvas, True, (col, row)) # TODO: Coordinate method, handle offsets and margins probably
+		elif self.selected is not None:
+			print('Moving a piece')
+			self.board.move(self.selected, pos)
+			self.board.render(self.canvas)
+			self.selected = None
+
 
 	def onmove(self, event):
+		return
+		board = self.board
+		canvas = self.canvas
 		coord = board.at(event.x, event.y)
 		if coord:
 			board.highlight(canvas, True, coord)
@@ -119,44 +149,9 @@ def main():
 
 	'''
 
-	root = tk.Tk()
-	root.title('Chess')
-	root.resizable(width=False, height=False)
-	canvas = tk.Canvas(width=8*60, height=8*60)
-	canvas.pack()
+	game = ChessApp(60)
+	game.run()
 
-	board = Board(60)
-	board.render(canvas)
-
-	def onclick(event):
-		
-		pos = board.at(event.x, event.y)
-
-		print('Click')
-		if not pos:
-			return
-
-		print('Valid pos')
-		col, row = pos
-
-		if board.board[col][row].piece == None:
-			return
-
-		print('Non-empty square')
-		print(*(board.board[col][row].piece.moves(board, col, row)))
-		board.highlight(canvas, True, *(board.board[col][row].piece.moves(board, col, row)))
-		# col, row = board.at(event.x, event.y)
-		# board.highlight(canvas, True, (col, row)) # TODO: Coordinate method, handle offsets and margins probably
-
-	def onmove(event):
-		coord = board.at(event.x, event.y)
-		if coord:
-			board.highlight(canvas, True, coord)
-
-	root.bind('<Button-1>', onclick)
-	root.bind('<Motion>', onmove)
-
-	root.mainloop()
 
 
 if __name__ == '__main__':
