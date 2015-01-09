@@ -99,6 +99,8 @@ class Piece(object):
 
 		# TODO: Pre-calculate maximum range based on position (eg. maximum dx = 8-x) (?)
 
+		# TODO: Function to combine predicates
+
 		piece = piece or self.piece # Optional argument for piece type (defaults to self)
 
 		within = board.within
@@ -134,7 +136,6 @@ class Piece(object):
 			'♘♞': lambda: [(x+dx, y+dy) for dx in (-1, 1, -2, 2) for dy in (-1, 1, -2, 2) if valid(x+dx, y+dy) and abs(dx) != abs(dy)],
 			# The Bishop
 			# Can move any number of steps diagonally
-			# 
 			'♗♝': lambda: chain( takewhile(accessible(lambda mx, my: (x-1,y-1)), ((x+delta, y+delta) for delta in range(1, 7+1))),
 						           takewhile(accessible(lambda mx, my: (x-1,y+1)), ((x+delta, y-delta) for delta in range(1, 7+1))),
 						           takewhile(accessible(lambda mx, my: (x+1,y-1)), ((x-delta, y+delta) for delta in range(1, 7+1))),
@@ -149,7 +150,7 @@ class Piece(object):
 			# Direction depends on colour 
 			# TODO: Avoid hard-coding colour-dependent direction
 			# TODO: Simplify 
-			'♙♟': lambda: ([(x, y+dyPawn)] if valid(x, y+dyPawn) else []) + [(x+dx, y+dyPawn) for dx in (-1, 1) if hasEnemy(x+dx, y+dyPawn)]
+			'♙♟': lambda: ([(x, y+dyPawn)] if within(x, y+dyPawn) and isEmpty(x, y+dyPawn) else []) + [(x+dx, y+dyPawn) for dx in (-1, 1) if hasEnemy(x+dx, y+dyPawn)]
 		}, mnemonic='moves')[piece]()
 
 
