@@ -111,14 +111,15 @@ class ChessApp(tk.Tk):
 		# TODO: Turn feedback
 
 		if self.selected is None and board.board[pos[0]][pos[1]].piece != None:
-			print('Selecting a piee')
 			self.selected = pos
 			col, row = self.selected
-			board.highlight(canvas, True, *(board.board[col][row].piece.moves(board, col, row)))
+			piece = board.board[col][row].piece
+			board.highlight(canvas, True, *piece.moves(board, col, row))
+			print('Selecting a piece ({0})'.format(piece))
 		elif self.selected is not None:
-			print('Moving a piece')
 			self.board.move(self.selected, pos)
 			self.board.render(self.canvas)
+			print('Moving a piece ({0})'.format(board.board[self.selected[0]][self.selected[1]].piece))
 			self.selected = None
 
 

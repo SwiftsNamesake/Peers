@@ -154,6 +154,13 @@ class Piece(object):
 		}, mnemonic='moves')[piece]()
 
 
+	def __str__(self):
+		return '{0.colour} {0.name}'.format(self)
+
+	def __repr__(self):
+		raise NotImplementedError
+
+
 
 def main():
 
